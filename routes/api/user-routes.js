@@ -4,7 +4,8 @@ const {
     getAllUsers,
     getUserById,
     postNewUser,
-    putUserById
+    putUserById,
+    deleteUserById
 } = require('../../controllers/user-controller.js');
 
 // ***********
@@ -22,7 +23,7 @@ router
     .route('/:id')
     .get(getUserById) // getUserById
     .put(putUserById) // putUserById
-    .delete(); // deleteUserById
+    .delete(deleteUserById); // deleteUserById
 
 // /api/users/:userId/friends/:friendId
 router

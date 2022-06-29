@@ -37,7 +37,7 @@ const ThoughtSchema = new Schema(
             default: Date.now,
             get: createdAtVal => dateFormat(createdAtVal)
         },
-        username: { // does it reference?
+        username: { // does it reference? ..no, don't think so.
             type: String,
             required: true
         },

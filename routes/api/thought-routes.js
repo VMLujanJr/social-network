@@ -1,6 +1,8 @@
 const router = require('express').Router();
 const {
-    // import thought methods here
+    getAllThoughts,
+    getThoughtById,
+    postNewThought
 } = require('../../controllers/thought-controller.js');
 
 // **************
@@ -10,13 +12,13 @@ const {
 // /api/thoughts
 router
     .route('/')
-    .get() // getAllThoughts
-    .post() // postNewThought // look at instructions...
+    .get(getAllThoughts) // getAllThoughts
+    .post(postNewThought) // postNewThought // look at instructions...
 
 // /api/thoughts/:id
 router
     .route('/:id')
-    .get() // getThoughtById
+    .get(getThoughtById) // getThoughtById
     .put() // putThoughtById
     .delete() // deleteThoughtById
 

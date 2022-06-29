@@ -4,6 +4,10 @@ const userController = {
     getAllUsers(req, res) {
         User.find({})
             // populate thoughts? reactions?
+            .populate({
+                path: 'thoughts',
+                select: '-__v'
+            })
             .select('-__v')
             .then(dbUserData => res.json(dbUserData))
             .catch(err => res.status(400).json(err));
@@ -12,7 +16,7 @@ const userController = {
         User.findOne({ _id: params.id })
             .then(dbUserData => {
                 if (!dbUserData) {
-                    return res.status(404).json({ message: 'No user was found!' });
+                    return res.status(404).json({ message: 'No user was found.' });
                 }
                 res.json(dbUserData);
             })
@@ -25,6 +29,16 @@ const userController = {
     },
     putUserById({ params, body }, res) {
         User.findOneAndUpdate({ _id: params.id }, body, { new: true })
+            .then(dbUserData => {
+                if (!dbUserData) {
+                    return res.status(404).json({ message: 'No user was found.' });
+                }
+                res.json(dbUserData);
+            })
+            .catch(err => res.status(400).json(err));
+    },
+    deleteUserById({ params }, res) {
+        User.findOneAndDelete({ _id: params.id })
             .then(dbUserData => {
                 if (!dbUserData) {
                     return res.status(404).json({ message: 'No user was found.' });
