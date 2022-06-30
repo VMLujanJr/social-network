@@ -8,6 +8,10 @@ const userController = {
                 path: 'thoughts',
                 select: '-__v'
             })
+            .populate({
+                path: 'friends',
+                select: '-__v'
+            })
             .select('-__v')
             .then(dbUserData => res.json(dbUserData))
             .catch(err => res.status(400).json(err));
@@ -25,6 +29,24 @@ const userController = {
     postNewUser({ body }, res) {
         User.create(body)
             .then(dbUserData => res.json(dbUserData))
+            .catch(err => res.status(400).json(err));
+    },
+    // THIS NEEDS WORK...
+    postNewFriend({ params, body }, res) {
+        User.create(body)
+            .then(({ _id }) => {
+                return User.findOneAndUpdate(
+                    { _id: params.userId },
+                    { $push: { friends: _id } },
+                    { new: true }
+                );
+            })
+            .then(dbUserData => {
+                if (!dbUserData) {
+                    return res.status(404).json({ message: 'No user found.' });
+                }
+                res.json(dbUserData);
+            })
             .catch(err => res.status(400).json(err));
     },
     putUserById({ params, body }, res) {
