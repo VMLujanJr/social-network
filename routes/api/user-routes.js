@@ -6,7 +6,8 @@ const {
     postNewUser,
     postNewFriend,
     putUserById,
-    deleteUserById
+    deleteUserById,
+    deleteExistingFriend
 } = require('../../controllers/user-controller.js');
 
 // ***********
@@ -30,7 +31,7 @@ router
 router
     .route('/:userId/friends/:friendId')
     .post(postNewFriend) // postNewFriend
-    .delete(); // deleteExistingFriend
+    .delete(deleteExistingFriend); // deleteExistingFriend
 
 // REMOVE USER'S ASSOCIATED THOUGHTS WHEN DELETED (BONUS)
 module.exports = router;
