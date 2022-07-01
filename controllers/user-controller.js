@@ -3,7 +3,6 @@ const { User } = require('../models');
 const userController = {
     getAllUsers(req, res) {
         User.find({})
-            // populate thoughts? reactions?
             .populate({
                 path: 'thoughts',
                 select: '-__v'
@@ -26,6 +25,7 @@ const userController = {
                 path: 'friends',
                 select: '-__v'
             })
+            .select('-__v')
             .then(dbUserData => {
                 if (!dbUserData) {
                     return res.status(404).json({ message: 'No user was found.' });
@@ -40,7 +40,7 @@ const userController = {
             .catch(err => res.status(400).json(err));
     },
     putUserById({ params, body }, res) {
-        User.findOneAndUpdate({ _id: params.id }, body, { new: true })
+        User.findOneAndUpdate({ _id: params.id }, body, { new: true, runValidators: true })
             .then(dbUserData => {
                 if (!dbUserData) {
                     return res.status(404).json({ message: 'No user was found.' });
@@ -53,7 +53,7 @@ const userController = {
         User.findOneAndUpdate(
             { _id: params.userId },
             { $push: { friends: params.friendId } },
-            { new: true }
+            { new: true, runValidators: true }
         )
         .then(dbUserData => {
             if (!dbUserData) {
@@ -77,7 +77,7 @@ const userController = {
         User.findOneAndUpdate(
             { _id: params.userId },
             { $pull: { friends: params.friendId } },
-            { new: true }
+            { new: true, runValidators: true }
         )
         .then(dbUserData => {
             if (dbUserData) {

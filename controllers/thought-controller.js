@@ -17,13 +17,12 @@ const thoughtController = {
             .catch(err => res.status(400).json(err));
     },
     postNewThought({ body }, res) {
-        console.log(body)
         Thought.create(body)
             .then(({ _id }) => {
                 return User.findOneAndUpdate(
                     { _id: body.userId },
                     { $push: { thoughts: _id } },
-                    { new: true }
+                    { new: true, runValidators: true }
                 );
             })
             .then(dbUserData    => {
@@ -34,8 +33,22 @@ const thoughtController = {
             })
             .catch(err => res.status(400).json(err));
     },
+    postNewReaction({ params , body }, res) {
+        Thought.findOneAndUpdate(
+            { _id: params.thoughtId },
+            { $push: { reactions: body } },
+            { new: true, runValidators: true }
+        )
+        .then(dbThoughtData => {
+            if (!dbThoughtData) {
+                return res.status(404).json({ message: 'No thoughts found.' });
+            }
+            res.json(dbThoughtData);
+        })
+        .catch(err => res.status(400).json(err));
+    },
     putThoughtById({ params, body }, res) {
-        Thought.findOneAndUpdate({ _id: params.id }, body, { new: true })
+        Thought.findOneAndUpdate({ _id: params.id }, body, { new: true, runValidators: true })
             .then(dbThoughtData => {
                 if (!dbThoughtData) {
                     return res.status(404).json({ message: 'No thoughts found.' });
@@ -53,6 +66,20 @@ const thoughtController = {
                 res.json(dbThoughtData);
             })
             .catch(err => res.status(400).json(err));
+    },
+    deleteExistingReaction({ params }, res) {
+        Thought.findOneAndUpdate(
+            { _id: params.thoughtId },
+            { $pull: { reactions: { reactionId: params.reactionId } } },
+            { new: true }
+        )
+        .then(dbThoughtData => {
+            if (!dbThoughtData) {
+                return res.status(404).json({ message: 'No thoughts found.' });
+            }
+            res.json(dbThoughtData);
+        })
+        .catch(err => res.json(err));
     }
 };
 
