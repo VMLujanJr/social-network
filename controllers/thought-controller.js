@@ -3,11 +3,13 @@ const { Thought, User } = require('../models');
 const thoughtController = {
     getAllThoughts(req, res) {
         Thought.find({})
+            .select('-__v')
             .then(dbThoughtData => res.json(dbThoughtData))
             .catch(err => res.status(400).json(err));
     },
     getThoughtById({ params }, res) {
         Thought.findOne({ _id: params.id })
+            .select('-__v')
             .then(dbThoughtData => {
                 if (!dbThoughtData) {
                     return res.status(404).json({ message: 'No thoughts found.' });
